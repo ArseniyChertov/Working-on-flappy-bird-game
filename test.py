@@ -1,10 +1,12 @@
+
+   
 import pygame, sys
-import PIL
 import random
 
 
 class Game:
     counter = 0
+    counter2 = 0
     start_game = True
     def __init__(self):
 
@@ -23,9 +25,9 @@ class Game:
         self.movement = 0  # movement of base of game
         # self.menu_surf = pygame.image.load('../graphics/ui/menu.png').convert_alpha()
 
-        self.button = pygame.image.load('pic/button.png')
+        #self.button = pygame.image.load('pic/button.png')
         self.greenp = pygame.image.load('pic/greenp.png')
-        self.start = pygame.image.load('pic/start.png')
+        #self.start = pygame.image.load('pic/start.png')
         self.piperec = self.greenp.get_rect(center=(150, 144))
         self.fliped = pygame.image.load('pic/fliped.png')
         self.pipe_list = []
@@ -36,6 +38,7 @@ class Game:
         self.s = 0
         self.z = random.randint(275, 370)
         self.x = 0
+        
     def run(self):
 
         while True:
@@ -70,6 +73,7 @@ class Game:
                 self.movement = 0
 
             self.display_score()
+            self.max_num_in_file('high_score.txt')
 
             # rect1 = pygame.draw.rect(screen, (255, 0, 0), (80, birdrec.centery - 15, 35, 35))
             self.center_y_bird = self.birdrec.centery - 15
@@ -80,7 +84,9 @@ class Game:
 
     def draw_floor(self):
         self.screen.blit(self.base, (self.movement, 400))  # original base
-        self.screen.blit(self.base, (self.movement + 288, 400))  # added on base to the right of screen
+        self.screen.blit(self.base, (self.movement + 288, 400))  # added on base to the right of
+        self.base_collision()
+        
         # clock.tick(200)
 
     def create_pipe(self, size):
@@ -100,16 +106,33 @@ class Game:
             center_x = pipe.centerx - 20
             self.rect2 = pygame.Rect(center_x, self.z, 30, 100)
             if self.rect1.x == self.rect2.x and self.rect1.y == self.rect2.y:
+                f = open("high_score.txt", "a")
+                f.write(str(self.counter) +'\n')
+                f.close()
+                #answer = self.max_num_in_file('highest_score.txt')
                 pygame.quit()
             distance = (((self.rect1.x - self.rect2.x) ** 2) + ((self.rect1.y - self.rect2.y) ** 2)) ** 0.5
 
             if distance < (self.rect1.width + self.rect2.width) / 2.0:
+                f = open("high_score.txt", "a")
+                f.write(str(self.counter) +'\n')
+                f.close()
+                #answer = self.max_num_in_file('highest_score.txt')
                 pygame.quit()
             if self.rect1.x == self.rect2.x:
                 self.counter += 1
+                
+            #self.rect5 = pygame.draw.rect(self.screen, (0, 0, 255), (self.movement, 400, 400,100))
+            '''if self.rect1.x == self.rect5.x and self.rect1.y == self.rect5.y:
+                pygame.quit()
+            distance = (((self.rect1.x - self.rect5.x) ** 2) + ((self.rect1.y - self.rect5.y) ** 2)) ** 0.5
+
+            if distance < (self.rect1.width + self.rect5.width) / 2.0:
+                pygame.quit()
                 # font = pygame.font.Font('freesansbold.ttf', 32)
                 # text = font.render('Score is ' + str(score), True, (255, 0, 0), (0, 0, 0))
                 # screen.blit(text, (50, 50))
+            '''
         return pipes
 
     def movep2(self, pipes):
@@ -120,10 +143,18 @@ class Game:
             center_x = pipe.centerx - 20
             self.rect3 = pygame.Rect(center_x, 0, self.z - 100, 120)
             if self.rect1.x == self.rect3.x and self.rect1.y == self.rect3.y:
+                f = open("high_score.txt", "a")
+                f.write(str(self.counter) +'\n')
+                f.close()
+                #answer = self.max_num_in_file('highest_score.txt')
                 pygame.quit()
             distance = (((self.rect1.x - self.rect3.x) ** 2) + ((self.rect1.y - self.rect3.y) ** 2)) ** 0.5
 
             if distance < (self.rect1.width + self.rect3.width) / 2.0:
+                f = open("high_score.txt", "a")
+                f.write(str(self.counter) +'\n')
+                f.close()
+                #answer = self.max_num_in_file('highest_score.txt')
                 pygame.quit()
 
         return pipes
@@ -139,7 +170,29 @@ class Game:
     def display_score(self):
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render(str(self.counter), True, (255, 0, 0), (0, 0, 0))
-        self.screen.blit(text, (265, 475))
+        self.screen.blit(text, (245, 475))
+        
+    def max_num_in_file(self, filename):
+        hs = 'high score is'
+        with open('high_score.txt', "r") as f:
+            data = [int(x) for x in f.readlines()]
+        max_data = max(data)
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render(str(max_data), True, (255, 0, 0), (0, 0, 0))
+        self.screen.blit(text, (15, 15))
+   
+    def base_collision(self):
+        rect5 = pygame.Rect((self.movement, 400),( 400,100))
+        if self.rect1.x == rect5.x and self.rect1.y == rect5.y:
+            pygame.quit()
+        distance = (((self.rect1.x - self.rect5.x) ** 2) + ((self.rect1.y - self.rect5.y) ** 2)) ** 0.5
+
+        if distance < (self.rect1.width + self.rect5.width) / 2.0:
+            pygame.quit()
+        
+    
+        
+
 
 
 if __name__ == '__main__':
